@@ -3,32 +3,27 @@ package aur
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 
 	"github.com/joaogiacometti/aurgo/internal/config"
+	"github.com/joaogiacometti/aurgo/internal/helpers"
 )
 
 func RemovePackage(pkgName string) error {
 	packagePath := filepath.Join(config.CacheDir, pkgName)
 
-	info, err := os.Stat(packagePath)
+	ok, err := helpers.IsDir(packagePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return fmt.Errorf("package '%s' not found in cache", pkgName)
 		}
 		return fmt.Errorf("failed to stat package path '%s': %w", packagePath, err)
 	}
-
-	if !info.IsDir() {
+	if !ok {
 		return fmt.Errorf("'%s' is not a directory", packagePath)
 	}
 
-	cmd := exec.Command("sudo", "pacman", "-Rns", pkgName)
-	cmd.Stdin = os.Stdin
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Run(); err != nil {
+	if err := helpers.RemoveWithPacman(pkgName); err != nil {
 		return fmt.Errorf("pacman failed to remove package '%s': %w", pkgName, err)
 	}
 

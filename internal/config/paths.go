@@ -7,6 +7,7 @@ import (
 
 var (
 	CacheDir  = filepath.Join(os.Getenv("HOME"), ".cache", "aurgo")
-	SearchURL = "https://aur.archlinux.org/rpc/?v=5&type=info&arg="
+	InfoURL   = "https://aur.archlinux.org/rpc/?v=5&type=info&arg="
+	SearchURL = "https://aur.archlinux.org/rpc/?v=5&type=search&arg="
 	AurUrl    = "https://aur.archlinux.org/"
 )

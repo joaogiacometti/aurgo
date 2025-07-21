@@ -7,19 +7,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"time"
 
 	"github.com/joaogiacometti/aurgo/internal/config"
 	"github.com/joaogiacometti/aurgo/internal/helpers"
-	"github.com/joaogiacometti/aurgo/internal/models"
+	"github.com/joaogiacometti/aurgo/internal/types"
 )
 
-type AURResponse struct {
-	Results []models.AurPackage `json:"results"`
-}
-
 func InstallPackage(pkgName string) error {
-	pkg, err := SearchPackage(pkgName)
+	pkg, err := searchPackage(pkgName)
 	if err != nil {
 		return fmt.Errorf("searching package: %w", err)
 	}
@@ -31,11 +26,11 @@ func InstallPackage(pkgName string) error {
 		return nil
 	}
 
-	if err := ClonePackage(pkg.Name); err != nil {
+	if err := clonePackage(pkg.Name); err != nil {
 		return fmt.Errorf("cloning package: %w", err)
 	}
 
-	if err := MakePackage(pkg.Name); err != nil {
+	if err := makePackage(pkg.Name); err != nil {
 		return fmt.Errorf("building package: %w", err)
 	}
 
@@ -43,14 +38,10 @@ func InstallPackage(pkgName string) error {
 	return nil
 }
 
-func SearchPackage(pkgName string) (*models.AurPackage, error) {
+func searchPackage(pkgName string) (*types.AurPackage, error) {
 	url := config.SearchURL + pkgName
 
-	client := &http.Client{
-		Timeout: time.Duration(config.HTTPTimeout) * time.Second,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := getClient().Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query AUR: %w", err)
 	}
@@ -60,7 +51,7 @@ func SearchPackage(pkgName string) (*models.AurPackage, error) {
 		return nil, fmt.Errorf("AUR query failed with status: %d", resp.StatusCode)
 	}
 
-	var aurResp AURResponse
+	var aurResp types.AURResponse
 	if err := json.NewDecoder(resp.Body).Decode(&aurResp); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
@@ -72,7 +63,7 @@ func SearchPackage(pkgName string) (*models.AurPackage, error) {
 	return &aurResp.Results[0], nil
 }
 
-func ClonePackage(pkgName string) error {
+func clonePackage(pkgName string) error {
 	if err := os.MkdirAll(config.CacheDir, 0755); err != nil {
 		return err
 	}
@@ -93,7 +84,7 @@ func ClonePackage(pkgName string) error {
 	return cmd.Run()
 }
 
-func MakePackage(pkgName string) error {
+func makePackage(pkgName string) error {
 	dir := filepath.Join(config.CacheDir, pkgName)
 
 	cmd := exec.Command("makepkg", "-si", "--noconfirm")

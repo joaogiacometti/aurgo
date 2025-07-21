@@ -37,7 +37,7 @@ func ReadVersions() (VersionsMap, error) {
 	return installed, nil
 }
 
-func WriteInstalled(versions VersionsMap) error {
+func WriteVersions(versions VersionsMap) error {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -53,20 +53,20 @@ func WriteInstalled(versions VersionsMap) error {
 	return os.WriteFile(config.VersionsFile, data, 0644)
 }
 
-func AddInstalled(pkg, version string) error {
+func AddVersion(pkg, version string) error {
 	versions, err := ReadVersions()
 	if err != nil {
 		return err
 	}
 	versions[pkg] = version
-	return WriteInstalled(versions)
+	return WriteVersions(versions)
 }
 
-func RemoveInstalled(pkg string) error {
+func RemoveVersion(pkg string) error {
 	versions, err := ReadVersions()
 	if err != nil {
 		return err
 	}
 	delete(versions, pkg)
-	return WriteInstalled(versions)
+	return WriteVersions(versions)
 }

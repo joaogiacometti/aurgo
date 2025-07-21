@@ -25,12 +25,17 @@ func InstallPackage(pkgName string) error {
 	if err := clonePackage(pkg.Name); err != nil {
 		return fmt.Errorf("cloning package: %w", err)
 	}
+	defer func() {
+		if err = os.RemoveAll(filepath.Join(config.DataDir, pkg.Name)); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: could not clean up package directory: %v\n", err)
+		}
+	}()
 
 	if err := makePackage(pkg.Name); err != nil {
 		return fmt.Errorf("building package: %w", err)
 	}
 
-	if err := helpers.AddInstalled(pkgName, pkg.Version); err != nil {
+	if err := helpers.AddVersion(pkgName, pkg.Version); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: could not track installed package: %v\n", err)
 	}
 

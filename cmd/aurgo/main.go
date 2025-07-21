@@ -23,9 +23,16 @@ func run(config helpers.FlagOptions, args []string) error {
 		return nil
 	}
 
-	if config.Install && config.Remove {
+	if (config.Install && config.Remove) || (config.Install && config.Update) || (config.Remove && config.Update) {
 		helpers.PrintUsage()
-		return fmt.Errorf("-S and -R cannot be used together")
+		return fmt.Errorf("cannot use -S, -R, and -U together")
+	}
+
+	if config.Update {
+		if len(args) > 0 {
+			return fmt.Errorf("-U does not take package arguments")
+		}
+		return aur.UpdateAll()
 	}
 
 	if len(args) == 0 {
@@ -33,24 +40,28 @@ func run(config helpers.FlagOptions, args []string) error {
 		return fmt.Errorf("no package name provided")
 	}
 
-	for _, pkg := range args {
-		switch {
-		case config.Search:
+	switch {
+	case config.Search:
+		for _, pkg := range args {
 			if err := aur.SearchPackage(pkg); err != nil {
 				return fmt.Errorf("search failed for %s: %w", pkg, err)
 			}
-		case config.Install:
+		}
+	case config.Install:
+		for _, pkg := range args {
 			if err := aur.InstallPackage(pkg); err != nil {
 				return fmt.Errorf("install failed for %s: %w", pkg, err)
 			}
-		case config.Remove:
+		}
+	case config.Remove:
+		for _, pkg := range args {
 			if err := aur.RemovePackage(pkg); err != nil {
 				return fmt.Errorf("remove failed for %s: %w", pkg, err)
 			}
-		default:
-			helpers.PrintUsage()
-			return fmt.Errorf("no operation specified, use -Ss, -S, or -R")
 		}
+	default:
+		helpers.PrintUsage()
+		return fmt.Errorf("no operation specified")
 	}
 
 	return nil

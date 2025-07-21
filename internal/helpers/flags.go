@@ -11,6 +11,7 @@ type FlagOptions struct {
 	Search   bool
 	Install  bool
 	Remove   bool
+	Update   bool
 }
 
 func ParseFlags() (FlagOptions, []string) {
@@ -20,6 +21,7 @@ func ParseFlags() (FlagOptions, []string) {
 	flag.BoolVar(&config.Search, "Ss", false, "Search for package(s)")
 	flag.BoolVar(&config.Install, "S", false, "Install package(s)")
 	flag.BoolVar(&config.Remove, "R", false, "Remove package(s)")
+	flag.BoolVar(&config.Update, "U", false, "Update package(s)")
 
 	flag.Usage = PrintUsage
 	flag.Parse()
@@ -34,7 +36,8 @@ func PrintUsage() {
 	flag.PrintDefaults()
 	fmt.Fprintf(os.Stderr, "\nExamples:\n")
 	fmt.Fprintf(os.Stderr, "  aurgo -h                 # Show help\n")
-	fmt.Fprintf(os.Stderr, "  aurgo -Ss neovim         # Search\n")
-	fmt.Fprintf(os.Stderr, "  aurgo -S bat fzf         # Install multiple packages\n")
-	fmt.Fprintf(os.Stderr, "  aurgo -R bat             # Remove a package\n")
+	fmt.Fprintf(os.Stderr, "  aurgo -Ss package        # Search\n")
+	fmt.Fprintf(os.Stderr, "  aurgo -S package         # Install multiple packages\n")
+	fmt.Fprintf(os.Stderr, "  aurgo -R package         # Remove a package\n")
+	fmt.Fprintf(os.Stderr, "  aurgo -U package         # Update a package\n")
 }

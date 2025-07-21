@@ -27,11 +27,7 @@ func RemovePackage(pkgName string) error {
 		return fmt.Errorf("pacman failed to remove package '%s': %w", pkgName, err)
 	}
 
-	if err := os.RemoveAll(packagePath); err != nil {
-		return fmt.Errorf("failed to remove package directory '%s': %w", packagePath, err)
-	}
-
-	if err := helpers.RemoveInstalled(pkgName); err != nil {
+	if err := helpers.RemoveVersion(pkgName); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: could not update installed list: %v\n", err)
 	}
 

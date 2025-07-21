@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/joaogiacometti/aurgo/internal/config"
 	"github.com/joaogiacometti/aurgo/internal/helpers"
@@ -45,11 +46,19 @@ func InstallPackage(pkgName string) error {
 func SearchPackage(pkgName string) (*models.AurPackage, error) {
 	url := config.SearchURL + pkgName
 
-	resp, err := http.Get(url)
+	client := &http.Client{
+		Timeout: time.Duration(config.HTTPTimeout) * time.Second,
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query AUR: %w", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("AUR query failed with status: %d", resp.StatusCode)
+	}
 
 	var aurResp AURResponse
 	if err := json.NewDecoder(resp.Body).Decode(&aurResp); err != nil {
@@ -79,6 +88,7 @@ func ClonePackage(pkgName string) error {
 	fmt.Println("Cloning", url)
 
 	cmd := exec.Command("git", "clone", "--depth=1", url, pkgPath)
+	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
 }
@@ -88,6 +98,7 @@ func MakePackage(pkgName string) error {
 
 	cmd := exec.Command("makepkg", "-si", "--noconfirm")
 	cmd.Dir = dir
+	cmd.Stderr = os.Stderr
 
 	fmt.Println("Installing package", pkgName)
 	return cmd.Run()

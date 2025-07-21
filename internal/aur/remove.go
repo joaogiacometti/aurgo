@@ -10,7 +10,7 @@ import (
 )
 
 func RemovePackage(pkgName string) error {
-	packagePath := filepath.Join(config.CacheDir, pkgName)
+	packagePath := filepath.Join(config.DataDir, pkgName)
 
 	ok, err := helpers.IsDir(packagePath)
 	if err != nil {
@@ -29,6 +29,10 @@ func RemovePackage(pkgName string) error {
 
 	if err := os.RemoveAll(packagePath); err != nil {
 		return fmt.Errorf("failed to remove package directory '%s': %w", packagePath, err)
+	}
+
+	if err := helpers.RemoveInstalled(pkgName); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: could not update installed list: %v\n", err)
 	}
 
 	fmt.Printf("Successfully removed package '%s'\n", pkgName)

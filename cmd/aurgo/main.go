@@ -1,4 +1,4 @@
-package aurgo
+package main
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/joaogiacometti/aurgo/internal/helpers"
 )
 
-func Execute() {
+func main() {
 	config, args := helpers.ParseFlags()
 
 	if err := run(config, args); err != nil {

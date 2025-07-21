@@ -5,6 +5,10 @@ import (
 	"os/exec"
 )
 
+func EnsureDir(dir string) error {
+	return os.MkdirAll(dir, 0755)
+}
+
 func runCmd(name string, args []string, dir string) error {
 	cmd := exec.Command(name, args...)
 	cmd.Stderr = os.Stderr

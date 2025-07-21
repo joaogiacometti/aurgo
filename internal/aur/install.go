@@ -30,16 +30,20 @@ func InstallPackage(pkgName string) error {
 		return fmt.Errorf("building package: %w", err)
 	}
 
+	if err := helpers.AddInstalled(pkgName, pkg.Version); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: could not track installed package: %v\n", err)
+	}
+
 	fmt.Printf("Successfully installed %s\n", pkg.Name)
 	return nil
 }
 
 func clonePackage(pkgName string) error {
-	if err := os.MkdirAll(config.CacheDir, 0755); err != nil {
+	if err := helpers.EnsureDir(config.DataDir); err != nil {
 		return err
 	}
 
-	pkgPath := filepath.Join(config.CacheDir, pkgName)
+	pkgPath := filepath.Join(config.DataDir, pkgName)
 
 	if _, err := os.Stat(pkgPath); err == nil {
 		fmt.Println("Package already cloned at:", pkgPath)
@@ -53,7 +57,7 @@ func clonePackage(pkgName string) error {
 }
 
 func makePackage(pkgName string) error {
-	dir := filepath.Join(config.CacheDir, pkgName)
+	dir := filepath.Join(config.DataDir, pkgName)
 
 	fmt.Println("Installing package", pkgName)
 

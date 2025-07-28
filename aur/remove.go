@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joaogiacometti/aurgo/internal/helpers"
+	"github.com/joaogiacometti/aurgo/helpers"
 )
 
 func RemovePackage(pkgName string) error {

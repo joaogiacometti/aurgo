@@ -3,7 +3,7 @@ package aur
 import (
 	"fmt"
 
-	"github.com/joaogiacometti/aurgo/internal/helpers"
+	"github.com/joaogiacometti/aurgo/helpers"
 )
 
 func UpdateAll() error {

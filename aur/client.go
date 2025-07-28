@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/joaogiacometti/aurgo/internal/config"
-	"github.com/joaogiacometti/aurgo/internal/types"
+	"github.com/joaogiacometti/aurgo/config"
+	"github.com/joaogiacometti/aurgo/types"
 )
 
 var httpClient = &http.Client{

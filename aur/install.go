@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/joaogiacometti/aurgo/internal/config"
-	"github.com/joaogiacometti/aurgo/internal/helpers"
+	"github.com/joaogiacometti/aurgo/config"
+	"github.com/joaogiacometti/aurgo/helpers"
 )
 
 func InstallPackage(pkgName string) error {

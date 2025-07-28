@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joaogiacometti/aurgo/internal/aur"
-	"github.com/joaogiacometti/aurgo/internal/helpers"
+	"github.com/joaogiacometti/aurgo/aur"
+	"github.com/joaogiacometti/aurgo/helpers"
 )
 
 func main() {

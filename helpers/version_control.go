@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/joaogiacometti/aurgo/internal/config"
+	"github.com/joaogiacometti/aurgo/config"
 )
 
 var mu sync.Mutex

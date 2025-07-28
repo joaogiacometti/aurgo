@@ -1,3 +1,3 @@
 install:
-	go build -o aurgo ./cmd/aurgo
+	go build -o aurgo
 	sudo mv aurgo /usr/local/bin/

@@ -15,8 +15,8 @@ func InstallPackage(pkgName string) error {
 		return fmt.Errorf("searching package: %w", err)
 	}
 
-	fmt.Printf("Package: %s\nVersion: %s\nDescription: %s\n",
-		pkg.Name, pkg.Version, pkg.Description)
+	fmt.Printf("Package: %s\nVersion: %s\nDescription: %s\nVotes: %d\n",
+		pkg.Name, pkg.Version, pkg.Description, pkg.NumVotes)
 
 	if !helpers.AskConfirmation(fmt.Sprintf("Install %s? (y/n) ", pkg.Name)) {
 		return nil
